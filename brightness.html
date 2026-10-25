@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brightness Control Ultimate — Zouaouid Tech</title>
+<meta name="description" content="Brightness Control Ultimate gives you advanced gamma, brightness and contrast control per monitor — and works in fullscreen games, overriding in-game color settings with precision.">
+<style>
+  :root{
+    --bg:#0f0f1a; --bg2:#15151f;
+    --surface:#1c1c2a; --surface2:#232335;
+    --border:#31314a; --text:#ececf5; --muted:#a2a2c0;
+    --accent:#6c7cff; --accent2:#a855f7; --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;line-height:1.65;color:var(--text);
+    font-family:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(900px 520px at 80% -10%, rgba(108,124,255,.20), transparent 60%),
+      radial-gradient(720px 520px at 0% 30%, rgba(168,85,247,.15), transparent 55%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px;}
+
+  header{position:sticky;top:0;z-index:10;background:rgba(15,15,26,.78);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand-logo{height:36px;width:auto;max-width:220px;display:block;}
+  .brand-text{font-weight:700;font-size:18px;color:var(--text);}
+  .nav-links{display:flex;gap:22px;font-size:14px;align-items:center;}
+  .nav-links a{color:var(--muted);text-decoration:none;}
+  .nav-links a:hover{color:var(--text);}
+
+  section{scroll-margin-top:80px;padding:54px 0;}
+  .hero{padding:76px 0 56px;text-align:center;}
+  .app-hero-logo{width:132px;height:132px;border-radius:26px;object-fit:cover;display:block;
+    margin:0 auto 26px;box-shadow:0 18px 50px rgba(108,124,255,.35);}
+  .eyebrow{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:#c7c9ff;background:rgba(108,124,255,.12);border:1px solid rgba(108,124,255,.35);
+    padding:6px 14px;border-radius:999px;margin-bottom:22px;}
+  h1{font-size:clamp(30px,5.4vw,52px);line-height:1.1;margin:0 0 16px;font-weight:800;
+    letter-spacing:-.02em;background:linear-gradient(180deg,#fff,#c9c9e6);
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.tagline{font-size:clamp(16px,2.3vw,19px);color:var(--muted);
+    max-width:700px;margin:0 auto 30px;}
+  .cta{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:12px;
+    font-weight:600;font-size:15px;text-decoration:none;
+    transition:transform .15s,box-shadow .2s,border-color .15s,background .15s;}
+  .btn-primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 10px 30px rgba(108,124,255,.35);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(108,124,255,.45);}
+  .btn-ghost{color:var(--text);border:1px solid var(--border);background:var(--surface);}
+  .btn-ghost:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .strip{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:38px;
+    color:var(--muted);font-size:14px;}
+  .strip span{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+    border:1px solid var(--border);border-radius:999px;background:var(--bg2);}
+  .dot{width:7px;height:7px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));}
+
+  .sec-head{margin-bottom:30px;}
+  .sec-head h2{font-size:clamp(22px,3.6vw,32px);margin:0 0 8px;font-weight:800;letter-spacing:-.01em;}
+  .sec-head p{margin:0;color:var(--muted);}
+
+  .lede{color:var(--muted);max-width:760px;margin:0 0 22px;}
+  .lede strong{color:var(--text);}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+  .card{padding:22px;border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--surface),#191926);border:1px solid var(--border);}
+  .card h3{margin:0 0 10px;font-size:17px;font-weight:700;}
+  .card p{margin:0;color:var(--muted);font-size:14px;}
+  .card p + p{margin-top:10px;}
+  .card ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14px;}
+  .card li{margin:5px 0;}
+  .ctl{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--text);}
+  .ctl::before{content:"";width:6px;height:6px;border-radius:50%;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));}
+
+  .panel{padding:26px;border-radius:var(--radius);background:var(--surface);
+    border:1px solid var(--border);}
+  .panel h3{margin:0 0 12px;font-size:17px;font-weight:700;}
+  .panel p{margin:0 0 10px;color:var(--muted);font-size:14px;}
+  .panel p:last-child{margin-bottom:0;}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border);
+    vertical-align:top;}
+  th{color:var(--muted);font-weight:600;width:190px;}
+  td{color:var(--text);}
+
+  .connect{display:flex;gap:14px;flex-wrap:wrap;}
+  .connect a{flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:16px;border-radius:14px;text-decoration:none;color:var(--text);font-weight:600;
+    background:var(--surface);border:1px solid var(--border);
+    transition:transform .15s,border-color .15s,background .15s;}
+  .connect a:hover{transform:translateY(-3px);border-color:var(--accent);background:var(--surface2);}
+  .connect svg{width:20px;height:20px;fill:currentColor;}
+
+  .note{font-size:13px;color:var(--muted);margin-top:16px;}
+  .note a{color:#9aa2ff;}
+
+  footer{border-top:1px solid var(--border);margin-top:30px;padding:30px 0 50px;
+    color:var(--muted);font-size:14px;text-align:center;}
+  footer a{color:#9aa2ff;text-decoration:none;}
+  footer a:hover{text-decoration:underline;}
+
+  @media (max-width:640px){
+    .nav-links{display:none;}
+    .hero{padding:52px 0 36px;}
+    .app-hero-logo{width:104px;height:104px;}
+    th{width:auto;}
+  }
+</style>
+</head>
+<body>
+  <header id="top">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="logo.png" alt="Zouaouid Tech"
+             onload="this.nextElementSibling.style.display='none'"
+             onerror="this.style.display='none'">
+        <span class="brand-text">Zouaouid Tech</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#apps">All apps</a>
+        <a href="mailto:zouaouidtech@gmail.com">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="hero">
+      <img class="app-hero-logo" src="Brightness%20Control%20Ultimate.png" alt="Brightness Control Ultimate"
+           onerror="this.style.display='none'">
+      <span class="eyebrow">Windows utility</span>
+      <h1>Brightness Control Ultimate</h1>
+      <p class="tagline">Advanced gamma, brightness and contrast control for your monitors —
+        and it keeps working in fullscreen games, letting you override in-game color settings
+        with precision.</p>
+
+      <div class="cta">
+        <a class="btn btn-primary" href="https://apps.microsoft.com/store/detail/XPDFG2GT0FZBRV" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/></svg>
+          Get it on Microsoft Store
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/tetteykn/Brightness_Control_Ultimate/releases/download/Brightness_Control_Ultimate/Zouaouid.Tech.msi">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M12 16l-6-6 1.41-1.41L11 12.17V4h2v8.17l3.59-3.58L18 10l-6 6zm-7 3v2h14v-2H5z"/></svg>
+          Direct download (.msi)
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/tetteykn/Brightness_Control_Ultimate" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18A11 11 0 0 1 12 5.6c.98 0 1.95.13 2.87.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+          Source on GitHub
+        </a>
+      </div>
+
+      <div class="strip">
+        <span><i class="dot"></i> One-time purchase</span>
+        <span><i class="dot"></i> Free trial</span>
+        <span><i class="dot"></i> No subscriptions</span>
+        <span><i class="dot"></i> Works offline once activated</span>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="sec-head">
+        <h2>Key features</h2>
+        <p>Designed for performance and accuracy.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Gamma, brightness and contrast</h3>
+          <p>Full control of the three settings most monitors expose only as a single
+             "brightness" slider — and most operating systems do not expose at all.</p>
+        </div>
+
+        <div class="card">
+          <h3>Per monitor</h3>
+          <p>Adjust each monitor independently, so a laptop panel and an external display can
+             be calibrated to their own characteristics instead of sharing one compromise
+             setting.</p>
+        </div>
+
+        <div class="card">
+          <h3>All monitors at once</h3>
+          <p>Apply the same adjustment across every connected monitor in one action when you
+             want them consistent instead.</p>
+        </div>
+
+        <div class="card">
+          <h3>Full-screen &amp; borderless</h3>
+          <p>Works in <strong>fullscreen games</strong> and borderless windowed applications —
+             overriding in-game color settings with precision, exactly where most display
+             utilities give up.</p>
+        </div>
+
+        <div class="card">
+          <h3>Clean, lightweight interface</h3>
+          <p>A compact WPF interface written in C#, built to stay out of your way. No bloat,
+             no heavyweight panels competing with the game.</p>
+        </div>
+
+        <div class="card">
+          <h3>Built for accuracy</h3>
+          <p>Adjustments are applied for accuracy and performance rather than as a crude
+             filter, so colors stay true instead of being washed out.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="why">
+      <div class="sec-head">
+        <h2>Why it exists</h2>
+      </div>
+      <p class="lede">Most laptops and monitors ship with a single brightness control, and
+        Windows itself offers nothing finer. That leaves two common problems:
+        <strong>a laptop screen that is too bright at night</strong>, and
+        <strong>a desktop panel that is too dim in a bright room</strong> — both fixed by
+        opening an expensive external display.</p>
+      <p class="lede">Gamma control is the part most tools skip. It shifts midtones rather than
+        pushing overall output, which is what you actually want for a dark room — and it is the
+        setting you need when a game insists on its own brightness and ignores everything else.
+        <strong>Brightness Control Ultimate gives you all three controls, per monitor, and keeps
+        working while a fullscreen game is running.</strong></p>
+    </section>
+
+    <section id="buy">
+      <div class="sec-head">
+        <h2>Getting it</h2>
+        <p>Try it first — the trial has full functionality.</p>
+      </div>
+
+      <div class="panel">
+        <h3>How purchase and activation work</h3>
+        <p>Brightness Control Ultimate includes a <strong>free trial</strong> with full
+           functionality. After the trial, a <strong>one-time purchase</strong> unlocks permanent
+           access — there are <strong>no subscriptions and no recurring fees</strong>.</p>
+        <p><strong>Online:</strong> if the device is connected and a previous purchase is
+           recognised, Brightness Control Ultimate activates automatically — no key entry
+           required.</p>
+        <p><strong>Offline:</strong> if the server is unavailable or you prefer to, enter the
+           serial key manually. Once activated the app works without a connection.</p>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <h3>Direct installer</h3>
+        <p>Prefer the installer over the Store? Download the signed <code>.msi</code> straight
+           from the <a href="https://github.com/tetteykn/Brightness_Control_Ultimate/releases" target="_blank" rel="noopener">releases page</a>
+           — it installs the same application.</p>
+        <p class="note">The Microsoft Store build is the recommended route: it updates itself
+           and is the listing customers generally expect.</p>
+      </div>
+    </section>
+
+    <section id="license">
+      <div class="sec-head">
+        <h2>License</h2>
+        <p>The commercial terms that matter, summarised. The full agreement is in the repository.</p>
+      </div>
+
+      <div class="panel">
+        <table>
+          <tr><th>Type</th><td>Licensed, not sold. Copyright &copy; 2026 Zouaouid Tech. All rights reserved.</td></tr>
+          <tr><th>Device limit</th><td>One license is active on one computer at a time.</td></tr>
+          <tr><th>Transferability</th><td>Locked to the device it was first activated on, and non-transferable.</td></tr>
+          <tr><th>Duration</th><td>Permanent (lifetime) access on the licensed device.</td></tr>
+          <tr><th>Multiple devices</th><td>Separate licenses are required for simultaneous use.</td></tr>
+          <tr><th>Offline use</th><td>Supported. No ongoing connection is needed after activation.</td></tr>
+          <tr><th>Data collected</th><td>Device-specific information required for activation and license verification. Never shared with third parties.</td></tr>
+          <tr><th>Refunds</th><td>Not issued once an activation code has been generated, because codes are device-bound and cannot be revoked.</td></tr>
+        </table>
+        <p class="note">Read the complete
+          <a href="license.html#brightness-control-ultimate">Brightness Control Ultimate Software License Agreement</a>,
+          including restrictions, version compatibility and license migration.</p>
+      </div>
+    </section>
+
+    <section id="connect">
+      <div class="sec-head">
+        <h2>Support &amp; contact</h2>
+        <p>Technical support is provided on a per-license basis.</p>
+      </div>
+      <div class="connect">
+        <a href="https://www.youtube.com/channel/UCksGhlnuOhirbMzMG3yYJmg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
+        </a>
+        <a href="https://discord.com/invite/jRnaeTJ" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+          Discord
+        </a>
+        <a href="mailto:zouaouidtech@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Email
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      &copy; 2026 Zouaouid Tech. All rights reserved.<br>
+      <a href="index.html">Zouaouid Tech — Windows utilities</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OmegaFile — Zouaouid Tech</title>
+<meta name="description" content="OmegaFile copies folders dramatically faster than Windows Explorer with an adaptive copy engine, and includes Force Delete for files Windows refuses to remove.">
+<style>
+  :root{
+    --bg:#0f0f1a; --bg2:#15151f;
+    --surface:#1c1c2a; --surface2:#232335;
+    --border:#31314a; --text:#ececf5; --muted:#a2a2c0;
+    --accent:#6c7cff; --accent2:#a855f7; --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;line-height:1.65;color:var(--text);
+    font-family:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(900px 520px at 80% -10%, rgba(108,124,255,.20), transparent 60%),
+      radial-gradient(720px 520px at 0% 30%, rgba(168,85,247,.15), transparent 55%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px;}
+
+  header{position:sticky;top:0;z-index:10;background:rgba(15,15,26,.78);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand-logo{height:36px;width:auto;max-width:220px;display:block;}
+  .brand-text{font-weight:700;font-size:18px;color:var(--text);}
+  .nav-links{display:flex;gap:22px;font-size:14px;align-items:center;}
+  .nav-links a{color:var(--muted);text-decoration:none;}
+  .nav-links a:hover{color:var(--text);}
+
+  section{scroll-margin-top:80px;padding:54px 0;}
+  .hero{padding:76px 0 56px;text-align:center;}
+  .app-hero-logo{width:132px;height:132px;border-radius:26px;object-fit:cover;display:block;
+    margin:0 auto 26px;box-shadow:0 18px 50px rgba(108,124,255,.35);}
+  .eyebrow{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:#c7c9ff;background:rgba(108,124,255,.12);border:1px solid rgba(108,124,255,.35);
+    padding:6px 14px;border-radius:999px;margin-bottom:22px;}
+  h1{font-size:clamp(30px,5.4vw,52px);line-height:1.1;margin:0 0 16px;font-weight:800;
+    letter-spacing:-.02em;background:linear-gradient(180deg,#fff,#c9c9e6);
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.tagline{font-size:clamp(16px,2.3vw,19px);color:var(--muted);
+    max-width:700px;margin:0 auto 30px;}
+  .cta{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:12px;
+    font-weight:600;font-size:15px;text-decoration:none;
+    transition:transform .15s,box-shadow .2s,border-color .15s,background .15s;}
+  .btn-primary{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 10px 30px rgba(108,124,255,.35);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(108,124,255,.45);}
+  .btn-ghost{color:var(--text);border:1px solid var(--border);background:var(--surface);}
+  .btn-ghost:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .strip{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:38px;
+    color:var(--muted);font-size:14px;}
+  .strip span{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+    border:1px solid var(--border);border-radius:999px;background:var(--bg2);}
+  .dot{width:7px;height:7px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));}
+
+  .sec-head{margin-bottom:30px;}
+  .sec-head h2{font-size:clamp(22px,3.6vw,32px);margin:0 0 8px;font-weight:800;letter-spacing:-.01em;}
+  .sec-head p{margin:0;color:var(--muted);}
+
+  .lede{color:var(--muted);max-width:760px;margin:0 0 26px;}
+  .lede strong{color:var(--text);}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+  .card{padding:22px;border-radius:var(--radius);
+    background:linear-gradient(180deg,var(--surface),#191926);border:1px solid var(--border);}
+  .card h3{margin:0 0 10px;font-size:17px;font-weight:700;}
+  .card p{margin:0;color:var(--muted);font-size:14px;}
+  .card p + p{margin-top:10px;}
+  .card ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14px;}
+  .card li{margin:5px 0;}
+  .strat{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:#9aa2ff;display:block;margin-bottom:6px;}
+
+  .bench{width:100%;border-collapse:collapse;margin-top:6px;font-size:15px;}
+  .bench th,.bench td{padding:13px 14px;border-bottom:1px solid var(--border);text-align:left;}
+  .bench thead th{color:var(--muted);font-weight:600;font-size:13px;
+    text-transform:uppercase;letter-spacing:.06em;}
+  .bench tbody td:first-child{color:var(--muted);}
+  .bench .win{color:#ff8a8a;font-weight:600;}
+  .bench .win-num{color:#ff8a8a;font-weight:700;}
+  .bench .of{color:#7fe3a3;font-weight:700;}
+
+  .panel{padding:26px;border-radius:var(--radius);background:var(--surface);
+    border:1px solid var(--border);}
+  .panel h3{margin:0 0 12px;font-size:17px;font-weight:700;}
+  .panel p{margin:0 0 10px;color:var(--muted);font-size:14px;}
+  .panel p:last-child{margin-bottom:0;}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--border);
+    vertical-align:top;}
+  th{color:var(--muted);font-weight:600;width:190px;}
+  td{color:var(--text);}
+
+  .connect{display:flex;gap:14px;flex-wrap:wrap;}
+  .connect a{flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:16px;border-radius:14px;text-decoration:none;color:var(--text);font-weight:600;
+    background:var(--surface);border:1px solid var(--border);
+    transition:transform .15s,border-color .15s,background .15s;}
+  .connect a:hover{transform:translateY(-3px);border-color:var(--accent);background:var(--surface2);}
+  .connect svg{width:20px;height:20px;fill:currentColor;}
+
+  .note{font-size:13px;color:var(--muted);margin-top:16px;}
+  .note a{color:#9aa2ff;}
+
+  footer{border-top:1px solid var(--border);margin-top:30px;padding:30px 0 50px;
+    color:var(--muted);font-size:14px;text-align:center;}
+  footer a{color:#9aa2ff;text-decoration:none;}
+  footer a:hover{text-decoration:underline;}
+
+  @media (max-width:640px){
+    .nav-links{display:none;}
+    .hero{padding:52px 0 36px;}
+    .app-hero-logo{width:104px;height:104px;}
+    th{width:auto;}
+  }
+</style>
+</head>
+<body>
+  <header id="top">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="logo.png" alt="Zouaouid Tech"
+             onload="this.nextElementSibling.style.display='none'"
+             onerror="this.style.display='none'">
+        <span class="brand-text">Zouaouid Tech</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#apps">All apps</a>
+        <a href="mailto:zouaouidtech@gmail.com">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="hero">
+      <img class="app-hero-logo" src="OmegaFile.png" alt="OmegaFile"
+           onerror="this.style.display='none'">
+      <span class="eyebrow">Windows utility</span>
+      <h1>OmegaFile</h1>
+      <p class="tagline">Copy faster. Delete anything. Take control. Windows copies files one
+        at a time, which is why a folder of thousands of small files crawls while a single huge
+        video copies in seconds. OmegaFile fixes that.</p>
+
+      <div class="cta">
+        <a class="btn btn-primary" href="https://apps.microsoft.com/store/detail/XPDP197B14DM02" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/></svg>
+          Get it on Microsoft Store
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/tetteykn/OmegaFile/releases/download/OmegaFile/Zouaouid.Tech.msi">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M12 16l-6-6 1.41-1.41L11 12.17V4h2v8.17l3.59-3.58L18 10l-6 6zm-7 3v2h14v-2H5z"/></svg>
+          Direct download (.msi)
+        </a>
+        <a class="btn btn-ghost" href="https://youtu.be/o9wJGV7FDTw" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          Watch the demo
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/tetteykn/OmegaFile" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.3-1.7-1.3-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18A11 11 0 0 1 12 5.6c.98 0 1.95.13 2.87.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+          Source on GitHub
+        </a>
+      </div>
+
+      <div class="strip">
+        <span><i class="dot"></i> One-time purchase</span>
+        <span><i class="dot"></i> Free trial</span>
+        <span><i class="dot"></i> No subscriptions</span>
+        <span><i class="dot"></i> Works offline once activated</span>
+      </div>
+    </section>
+
+    <section id="why">
+      <div class="sec-head">
+        <h2>The problem Windows doesn't tell you about</h2>
+      </div>
+
+      <p class="lede">You copy a folder, walk away, come back twenty minutes later and it
+        still isn't done — even though the folder is only a few gigabytes. Meanwhile a single
+        20&nbsp;GB video copied last week finished in under two minutes.</p>
+
+      <p class="lede">The answer has nothing to do with total size or drive speed. It has
+        everything to do with the <strong>number of files</strong>.</p>
+
+      <p class="lede">Windows processes each file individually — open, read, write, close, move
+        on. For one large file that's fine. But a folder of thousands of small files makes
+        Windows repeat that entire sequence thousands of times, each one costing multiple calls
+        into the OS kernel plus a separate disk operation for metadata. With 10,000 files that's
+        potentially 80,000–100,000 individual system operations before a single byte of your
+        actual data has finished moving.</p>
+
+      <p class="lede">That is why a folder with 50,000 small files totalling just 1&nbsp;GB can
+        take <strong>over an hour</strong> in Windows, while a 20&nbsp;GB video copies in minutes.
+        The bottleneck isn't your disk — it's the way Windows handles each file one at a time.
+        <strong>OmegaFile solves this completely.</strong></p>
+    </section>
+
+    <section id="bench">
+      <div class="sec-head">
+        <h2>Benchmark</h2>
+        <p>A direct comparison copying a real folder — same machine, same source, same destination, same files.</p>
+      </div>
+
+      <div class="panel">
+        <table class="bench">
+          <thead>
+            <tr><th></th><th>Windows Copy</th><th>OmegaFile</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Folder contents</td><td>3,947 files</td><td>3,947 files</td></tr>
+            <tr><td>Total size</td><td>81.1 MB</td><td>81.1 MB</td></tr>
+            <tr><td>Time to complete</td><td class="win-num">26 seconds</td><td class="of">5 seconds</td></tr>
+            <tr><td>Speed improvement</td><td>—</td><td class="of">5.2&times; faster</td></tr>
+          </tbody>
+        </table>
+        <p class="note">This advantage only grows as file counts increase. At 10,000 files the
+          gap widens dramatically; at 100,000 files Windows may take hours while OmegaFile
+          completes in minutes.</p>
+        <p class="note">See it in action in the
+          <a href="https://youtu.be/o9wJGV7FDTw" target="_blank" rel="noopener">YouTube demo</a>.</p>
+      </div>
+    </section>
+
+    <section id="engine">
+      <div class="sec-head">
+        <h2>How it copies so much faster</h2>
+        <p>OmegaFile uses an adaptive copy engine that picks the best strategy for what you are
+          copying. You never choose — it detects and decides instantly.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Single file</h3>
+          <span class="strat">Strategy A</span>
+          <p>Uses Windows' native <code>CopyFileEx</code> API directly — the most efficient
+             path possible for one file, with real-time progress reporting so you always see
+             exactly how far along the copy is.</p>
+        </div>
+
+        <div class="card">
+          <h3>Small collections</h3>
+          <span class="strat">Strategy B &middot; under 1,000 files</span>
+          <p>Runs <strong>8 parallel copy workers</strong> at once. Instead of waiting for file
+             #1 before starting file #2, all eight copy different files simultaneously. On a
+             modern SSD this alone delivers a significant speedup.</p>
+        </div>
+
+        <div class="card">
+          <h3>Large collections</h3>
+          <span class="strat">Strategy C &middot; up to 100,000 files</span>
+          <p>Uses <strong>IOCP (I/O Completion Ports)</strong> — the same technology inside
+             high-performance web servers and database engines. Up to 24 copy operations are
+             submitted to the OS simultaneously and completions are processed as they arrive,
+             keeping the disk queue full so data moves without gaps.</p>
+        </div>
+
+        <div class="card">
+          <h3>Extreme collections</h3>
+          <span class="strat">Strategy D &middot; 100,000+ files</span>
+          <p>Switches to a turbo stream mode. Files are processed in large batches flowing
+             through the system as a continuous data stream rather than individual operations,
+             bypassing most per-file overhead and scaling to millions of files without
+             degrading.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="delete">
+      <div class="sec-head">
+        <h2>Force Delete</h2>
+        <p>Remove files Windows refuses to touch.</p>
+      </div>
+
+      <p class="lede">Windows sometimes refuses to delete files. You see errors like
+        <em>"The file is open in another program"</em>, <em>"Access is denied"</em>, or
+        <em>"You need administrator permission"</em> — even when no program is visibly using
+        the file.</p>
+
+      <div class="panel">
+        <p>OmegaFile's <strong>Force Delete</strong> handles all of these cases. It takes
+           ownership of the file, strips all blocking attributes, closes any open handles it can
+           reach, and removes the item.</p>
+        <p>For files so deeply locked that even these steps cannot free them, OmegaFile schedules
+           them for <strong>automatic deletion the next time Windows restarts</strong> — the file
+           is gone on next boot, with no manual steps required.</p>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="sec-head">
+        <h2>Key features</h2>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Intelligent adaptive copying</h3>
+          <p>OmegaFile scans your selection in under a second, counts the files, measures the
+             total size, and automatically picks the right strategy. No settings to configure,
+             no modes to select — it just works.</p>
+        </div>
+
+        <div class="card">
+          <h3>Move support (cut &amp; paste)</h3>
+          <p>Handles file moves as well as copies. Moving between folders on the same drive uses
+             the fastest available path; moving between drives copies then deletes, giving you
+             progress feedback the whole time.</p>
+        </div>
+
+        <div class="card">
+          <h3>Windows context menu</h3>
+          <p>Adds an <strong>OmegaFile</strong> submenu to your right-click menu on any file or
+             folder with Copy, Cut, Delete and Force Delete — plus
+             <strong>OmegaFile: Paste</strong> inside any folder.</p>
+          <p>Registered automatically during installation and removed on uninstall. Toggle it
+             any time from Settings.</p>
+        </div>
+
+        <div class="card">
+          <h3>Live progress window</h3>
+          <ul>
+            <li>Current file being processed</li>
+            <li>Which strategy is active</li>
+            <li>Files completed out of total</li>
+            <li>Data transferred out of total</li>
+            <li>Real-time transfer speed in MB/s</li>
+            <li>A cancel button that stops the operation cleanly at any point</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Skip empty folders</h3>
+          <p>When copying folder structures that contain empty subdirectories, choose to skip
+             them and transfer only folders that actually contain files.</p>
+        </div>
+
+        <div class="card">
+          <h3>When Windows copy is fine</h3>
+          <p>The advantage is most visible when copying <strong>more than a few hundred
+             files</strong>, with <strong>deep subfolder structures</strong>, of
+             <strong>small files</strong> under 1&nbsp;MB each — especially when Windows shows
+             an estimate of several minutes for data under 1&nbsp;GB.</p>
+          <p>For everyday simple copies — one document, a few photos — Windows copy is perfectly
+             adequate.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="who">
+      <div class="sec-head">
+        <h2>Who it's for</h2>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Developers</h3>
+          <p>Copying project folders, <code>node_modules</code> directories, build outputs or
+             source repositories with thousands of small files. A typical web project's
+             <code>node_modules</code> can hold over 100,000 files.</p>
+        </div>
+
+        <div class="card">
+          <h3>Designers &amp; creators</h3>
+          <p>Working with asset libraries, texture packs, icon sets or font collections that
+             contain large numbers of individual files.</p>
+        </div>
+
+        <div class="card">
+          <h3>IT &amp; administrators</h3>
+          <p>Backing up workstations, migrating user profiles, or copying software deployment
+             packages across large file trees.</p>
+        </div>
+
+        <div class="card">
+          <h3>Gamers</h3>
+          <p>Moving game installations between drives, copying mod folders, or managing large
+             collections of game files.</p>
+        </div>
+      </div>
+
+      <p class="note">And anyone who has ever watched a Windows copy dialog sit at
+        "Calculating..." for five minutes — that delay is Windows counting your files one at a
+        time before it even starts. OmegaFile begins copying almost instantly.</p>
+    </section>
+
+    <section id="buy">
+      <div class="sec-head">
+        <h2>Getting it</h2>
+        <p>Try it first — the trial has full functionality.</p>
+      </div>
+
+      <div class="panel">
+        <h3>How purchase and activation work</h3>
+        <p>OmegaFile includes a <strong>free trial</strong> with full functionality. After the
+           trial, a <strong>one-time purchase</strong> unlocks permanent access — there are
+           <strong>no subscriptions and no recurring fees</strong>.</p>
+        <p><strong>Online:</strong> if the device is connected and a previous purchase is
+           recognised, OmegaFile activates automatically — no key entry required.</p>
+        <p><strong>Offline:</strong> if the server is unavailable or you prefer to, enter the
+           serial key manually. Once activated the app works without a connection.</p>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <h3>Direct installer</h3>
+        <p>Prefer the installer over the Store? Download the signed <code>.msi</code> straight
+           from the <a href="https://github.com/tetteykn/OmegaFile/releases" target="_blank" rel="noopener">releases page</a>
+           — it installs the same application.</p>
+        <p class="note">The Microsoft Store build is the recommended route: it updates itself
+           and is the listing customers generally expect.</p>
+      </div>
+
+      <div class="panel" style="margin-top:18px;">
+        <h3>Uninstallation</h3>
+        <p>On uninstall all application files and data are completely removed. The parent folder
+           <code>C:\Users\username\AppData\Local\Zouaouid Tech\</code> may remain, since it is
+           shared with other applications from the same publisher. If OmegaFile is the only
+           installed Zouaouid Tech application, that folder can be deleted manually.</p>
+      </div>
+    </section>
+
+    <section id="license">
+      <div class="sec-head">
+        <h2>License</h2>
+        <p>The commercial terms that matter, summarised. The full agreement is in the repository.</p>
+      </div>
+
+      <div class="panel">
+        <table>
+          <tr><th>Type</th><td>Licensed, not sold. Copyright &copy; 2026 Zouaouid Tech. All rights reserved.</td></tr>
+          <tr><th>Device limit</th><td>One license is active on one computer at a time.</td></tr>
+          <tr><th>Transferability</th><td>Locked to the device it was first activated on, and non-transferable.</td></tr>
+          <tr><th>Duration</th><td>Permanent (lifetime) access on the licensed device.</td></tr>
+          <tr><th>Multiple devices</th><td>Separate licenses are required for simultaneous use.</td></tr>
+          <tr><th>Offline use</th><td>Supported. No ongoing connection is needed after activation.</td></tr>
+          <tr><th>Data collected</th><td>Your name, device hardware identifier, and registration/activation dates — used solely to verify the license. Never shared with third parties.</td></tr>
+          <tr><th>Payments</th><td>Payment information is processed by the payment provider and never stored by us.</td></tr>
+          <tr><th>Refunds</th><td>Not issued once an activation code has been generated, because codes are device-bound and cannot be revoked.</td></tr>
+        </table>
+        <p class="note">Read the complete
+          <a href="license.html#omegafile">OmegaFile Software License Agreement</a>,
+          including restrictions, version compatibility and license migration.</p>
+      </div>
+    </section>
+
+    <section id="connect">
+      <div class="sec-head">
+        <h2>Support &amp; contact</h2>
+        <p>Technical support is provided on a per-license basis.</p>
+      </div>
+      <div class="connect">
+        <a href="https://www.youtube.com/channel/UCksGhlnuOhirbMzMG3yYJmg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
+        </a>
+        <a href="https://discord.com/invite/jRnaeTJ" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+          Discord
+        </a>
+        <a href="mailto:zouaouidtech@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Email
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      &copy; 2026 Zouaouid Tech. All rights reserved.<br>
+      <a href="index.html">Zouaouid Tech — Windows utilities</a>
+    </div>
+  </footer>
+</body>
+</html>
