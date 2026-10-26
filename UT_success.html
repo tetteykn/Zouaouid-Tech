@@ -1,0 +1,177 @@
+<!-- tetteykn/RepoPagesRedirect/UT_success.html -->
+ <!-- https://tetteykn.github.io/RepoPagesRedirect/UT_success.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Push To Talk</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        h1 { color: #28a745; }
+        p { color: #666; line-height: 1.6; }
+        .icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+            color: #28a745;
+        }
+        .discord-link {
+            color: #5865F2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .discord-link:hover {
+            text-decoration: underline;
+        }
+        .info-box {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .info-box p {
+            margin: 0;
+        }
+        .info-title {
+            font-weight: bold;
+            color: #333 !important;
+        }
+        .info-value {
+            margin-top: 0.5rem !important;
+            font-size: 1.1rem;
+            color: #28a745 !important;
+            font-weight: bold;
+        }
+        .order-id-box {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+        }
+        .copy-button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        .copy-button:hover {
+            background: #1976d2;
+        }
+        .copy-button.copied {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✓</div>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for choosing us!</p>
+        
+        <div class="info-box">
+            <p class="info-title">Game Utility Purchased:</p>
+            <p id="gameName" class="info-value">Loading...</p>
+        </div>
+
+        <div id="orderIdBox" class="order-id-box" style="display: none;">
+            <p class="info-title">Transaction ID:</p>
+            <p id="orderId" class="info-value" style="color: #2196f3 !important; font-family: monospace; word-break: break-all;">
+                Loading...
+                <button id="copyButton" class="copy-button" onclick="copyOrderId()">Copy</button>
+            </p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                Keep this ID for your records and support inquiries.
+            </p>
+        </div>
+        
+        <p>If you face any problem please visit us in discord:<br>
+        <a href="https://discord.gg/B46hMVRN9H" class="discord-link" target="_blank">https://discord.gg/B46hMVRN9H</a></p>
+        
+        <p>You may now close this window and return to the application.</p>
+    </div>
+
+    <script>
+        // Get parameters from URL
+        function getUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                game: urlParams.get('game') || 'Unknown Game',
+                // PayPal redirects with 'token' parameter which is the order ID
+                orderId: urlParams.get('token') || urlParams.get('orderId') || null
+            };
+        }
+
+        // Copy order ID to clipboard
+        function copyOrderId() {
+            const orderIdElement = document.getElementById('orderId');
+            const copyButton = document.getElementById('copyButton');
+            const orderIdText = orderIdElement.textContent.replace('Copy', '').trim();
+            
+            navigator.clipboard.writeText(orderIdText).then(function() {
+                copyButton.textContent = 'Copied!';
+                copyButton.classList.add('copied');
+                
+                setTimeout(function() {
+                    copyButton.textContent = 'Copy';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                // Fallback for browsers that don't support clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = orderIdText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                copyButton.textContent = 'Copied!';
+                copyButton.classList.add('copied');
+                
+                setTimeout(function() {
+                    copyButton.textContent = 'Copy';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Initialize page
+        window.onload = function() {
+            const params = getUrlParams();
+            
+            // Display game name
+            document.getElementById('gameName').textContent = decodeURIComponent(params.game);
+            
+            // Display order ID if available
+            if (params.orderId) {
+                document.getElementById('orderIdBox').style.display = 'block';
+                document.getElementById('orderId').innerHTML = 
+                    decodeURIComponent(params.orderId) + 
+                    '<button id="copyButton" class="copy-button" onclick="copyOrderId()">Copy</button>';
+            }
+        };
+    </script>
+</body>
+</html>
